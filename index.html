@@ -5,31 +5,90 @@
 <meta name="viewport" content="width=240, initial-scale=1, user-scalable=no">
 <title>Egypt Radio</title>
 <style>
-  :root { --bg:#0c2b33; --panel:#14424d; --text:#f1ebd8; --dim:#8fb0b5; --gold:#e3b341; --err:#ff8a7a; }
-  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-  html, body { width:240px; height:282px; overflow:hidden; background:var(--bg); color:var(--text);
-    font-family:"Noto Sans Arabic","Segoe UI",Tahoma,sans-serif; }
-  #now { height:92px; padding:10px 12px; background:var(--panel); border-bottom:2px solid var(--gold);
-    display:flex; flex-direction:column; justify-content:center; }
-  #name { font-size:19px; font-weight:700; line-height:1.25; max-height:48px; overflow:hidden; }
-  #status { font-size:12px; color:var(--dim); margin-top:4px; }
-  #status.err { color:var(--err); }
-  #status.on { color:var(--gold); }
-  #list { height:190px; overflow-y:auto; scrollbar-width:none; }
-  #list::-webkit-scrollbar { display:none; }
-  .row { padding:9px 12px; font-size:15px; border-bottom:1px solid #1b4f5b; white-space:nowrap;
-    overflow:hidden; text-overflow:ellipsis; }
-  .row.sel { background:var(--gold); color:#1a1405; font-weight:700; }
-  .row.cur:not(.sel) { color:var(--gold); }
-  #msg { padding:16px 12px; font-size:14px; color:var(--dim); line-height:1.4; }
+  @property --h { syntax:"<number>"; inherits:true; initial-value:42; }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; user-select:none; }
+  html, body { width:240px; height:282px; overflow:hidden; }
+  body { --h:42; transition:--h .9s ease; color:#f3efe2; position:relative;
+    font-family:"Noto Sans Arabic","Segoe UI",Tahoma,sans-serif;
+    background:radial-gradient(ellipse at 50% 30%, hsl(var(--h) 55% 17%), #050b1c 72%); }
+
+  #sky span { position:absolute; width:2px; height:2px; border-radius:50%; background:#fff; opacity:.2;
+    animation:twinkle 3s ease-in-out infinite; }
+  @keyframes twinkle { 50% { opacity:.85; transform:scale(1.6); } }
+
+  header { position:absolute; top:8px; left:14px; right:14px; display:flex; justify-content:space-between;
+    font-size:11px; color:hsl(var(--h) 30% 70%); z-index:3; }
+  #state { display:flex; align-items:center; gap:6px; }
+  .dot { width:6px; height:6px; border-radius:50%; background:hsl(var(--h) 30% 55%); }
+  body.playing .dot { background:hsl(var(--h) 95% 65%); box-shadow:0 0 8px hsl(var(--h) 95% 65%); }
+  body.playing #statusText { color:hsl(var(--h) 95% 72%); }
+
+  #stage { position:absolute; top:26px; left:50%; width:150px; height:150px; margin-left:-75px; z-index:2; }
+  #stage > * { position:absolute; top:50%; left:50%; border-radius:50%; transform:translate(-50%,-50%); }
+  .rip { width:104px; height:104px; border:1.5px solid hsl(var(--h) 95% 65%); opacity:0; }
+  body.playing .rip { animation:ripple 2.7s ease-out infinite; }
+  .rip:nth-of-type(2) { animation-delay:.9s !important; } .rip:nth-of-type(3) { animation-delay:1.8s !important; }
+  @keyframes ripple { 0% { transform:translate(-50%,-50%) scale(1); opacity:.7; }
+    100% { transform:translate(-50%,-50%) scale(1.45); opacity:0; } }
+
+  #dial { width:140px; height:140px; transition:transform .4s cubic-bezier(.2,.9,.3,1.25);
+    background:repeating-conic-gradient(hsl(var(--h) 85% 72% / .85) 0 1.6deg, transparent 1.6deg 15deg);
+    -webkit-mask:radial-gradient(circle, transparent 60px, #000 61px 69px, transparent 70px);
+            mask:radial-gradient(circle, transparent 60px, #000 61px 69px, transparent 70px); }
+  #dial::after { content:""; position:absolute; top:-3px; left:50%; width:3px; height:9px; margin-left:-1.5px; }
+  #pointer { position:absolute; top:1px; left:50%; width:0; height:0; margin-left:-5px; transform:none;
+    border-left:5px solid transparent; border-right:5px solid transparent; border-top:8px solid #fff; border-radius:0 !important; }
+
+  #disc { width:104px; height:104px; display:grid; place-items:center; border:0; color:#1c1203;
+    background:radial-gradient(circle at 35% 30%, hsl(var(--h) 100% 82%), hsl(var(--h) 92% 58%) 55%, hsl(calc(var(--h) - 12) 85% 38%));
+    box-shadow:0 0 26px hsl(var(--h) 95% 55% / .45), inset 0 -8px 16px hsl(var(--h) 90% 25% / .45); }
+  body.playing #disc { animation:breathe 2.4s ease-in-out infinite; }
+  @keyframes breathe { 50% { transform:translate(-50%,-50%) scale(1.05); box-shadow:0 0 44px hsl(var(--h) 95% 60% / .75), inset 0 -8px 16px hsl(var(--h) 90% 25% / .45); } }
+  #disc:active { filter:brightness(1.1); }
+  #icon { width:34px; height:34px; fill:currentColor; }
+  #bars { display:none; align-items:center; gap:4px; height:34px; }
+  #bars i { width:5px; border-radius:3px; background:currentColor; animation:bar .8s ease-in-out infinite; }
+  #bars i:nth-child(1) { animation-delay:0s; } #bars i:nth-child(2) { animation-delay:.2s; }
+  #bars i:nth-child(3) { animation-delay:.4s; } #bars i:nth-child(4) { animation-delay:.1s; } #bars i:nth-child(5) { animation-delay:.3s; }
+  @keyframes bar { 0%,100% { height:7px; } 50% { height:32px; } }
+  body.here #icon { display:none; } body.here #bars { display:flex; }
+
+  #info { position:absolute; top:182px; left:0; right:0; text-align:center; padding:0 16px; z-index:3; }
+  #name { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    font-size:19px; font-weight:700; line-height:1.25; text-shadow:0 2px 14px hsl(var(--h) 90% 40% / .6); }
+  #name.up { animation:slideUp .28s ease-out; } #name.down { animation:slideDown .28s ease-out; }
+  @keyframes slideUp { from { transform:translateY(14px); opacity:0; } }
+  @keyframes slideDown { from { transform:translateY(-14px); opacity:0; } }
+  #hint { margin-top:4px; font-size:10.5px; color:hsl(var(--h) 25% 68%); line-height:1.3; }
+  #hint.err { color:#ff9a86; }
+
+  .wave { position:absolute; left:0; bottom:0; width:480px; height:44px; fill:hsl(var(--h) 75% 48% / .32);
+    animation:flow 9s linear infinite; }
+  .wave.b { bottom:-6px; fill:hsl(var(--h) 85% 62% / .22); animation-duration:6s; animation-direction:reverse; }
+  body.playing .wave { animation-duration:4s; } body.playing .wave.b { animation-duration:2.8s; }
+  @keyframes flow { to { transform:translateX(-240px); } }
 </style>
 </head>
 <body>
-<div id="now">
-  <div id="name" dir="auto">Egypt Radio</div>
-  <div id="status">Loading stations</div>
+<div id="sky"></div>
+<header>
+  <div id="state"><span class="dot"></span><span id="statusText">Loading</span></div>
+  <span id="count"></span>
+</header>
+<div id="stage">
+  <div class="rip"></div><div class="rip"></div><div class="rip"></div>
+  <div id="dial"></div><div id="pointer"></div>
+  <button id="disc" aria-label="Play or pause">
+    <svg id="icon" viewBox="0 0 24 24"><path id="path" d="M8 5v14l11-7z"/></svg>
+    <div id="bars"><i></i><i></i><i></i><i></i><i></i></div>
+  </button>
 </div>
-<div id="list"></div>
+<div id="info">
+  <div id="name" dir="auto">Egypt Radio</div>
+  <div id="hint">Scroll to tune</div>
+</div>
+<svg class="wave b" viewBox="0 0 480 44"><path d="M0 22Q30 2 60 22T120 22T180 22T240 22T300 22T360 22T420 22T480 22V44H0Z"/></svg>
+<svg class="wave" viewBox="0 0 480 44"><path d="M0 24Q30 6 60 24T120 24T180 24T240 24T300 24T360 24T420 24T480 24V44H0Z"/></svg>
 <audio id="audio" preload="none"></audio>
 
 <script>
@@ -40,62 +99,86 @@ const MY_STATIONS = [
 
 const SERVERS = ["https://de1.api.radio-browser.info", "https://at1.api.radio-browser.info", "https://nl1.api.radio-browser.info"];
 const QUERY = "/json/stations/search?countrycode=EG&hidebroken=true&order=clickcount&reverse=true&limit=60";
+const PLAY = "M8 5v14l11-7z", PAUSE = "M6 5h4v14H6zM14 5h4v14h-4z";
+const HUES = [172, 42, 14, 265, 150, 205]; // turquoise, gold, carnelian, lapis violet, jade, azure
 
 const $ = id => document.getElementById(id);
 const audio = $("audio");
-let stations = [], sel = 0, cur = -1;
+let stations = [], sel = 0, cur = -1, angle = 0;
 
 const store = {
   get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 };
 
-function setStatus(text, cls) { const s = $("status"); s.textContent = text; s.className = cls || ""; }
+for (let i = 0; i < 16; i++) {
+  const s = document.createElement("span");
+  s.style.left = Math.random() * 236 + "px"; s.style.top = Math.random() * 150 + "px";
+  s.style.animationDelay = (Math.random() * 3) + "s";
+  $("sky").appendChild(s);
+}
 
-function render() {
-  const list = $("list");
-  if (!stations.length) { list.innerHTML = '<div id="msg">No stations found. Check the Wi-Fi connection, then reopen the app.</div>'; return; }
-  list.innerHTML = "";
-  stations.forEach((st, i) => {
-    const d = document.createElement("div");
-    d.className = "row" + (i === sel ? " sel" : "") + (i === cur ? " cur" : "");
-    d.dir = "auto";
-    d.textContent = st.name;
-    d.onclick = () => { sel = i; play(i); };
-    list.appendChild(d);
-  });
-  const row = list.children[sel];
-  if (row) row.scrollIntoView({ block: "nearest" });
+function hueFor(name) { let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0; return HUES[h % HUES.length]; }
+
+function setStatus(text, err) {
+  $("statusText").textContent = text;
+  const h = $("hint");
+  if (err) { h.textContent = err; h.className = "err"; }
+  else { h.textContent = "Scroll to tune · side button plays"; h.className = ""; }
+}
+
+function render(dir) {
+  const n = stations.length;
+  const here = cur === sel && !audio.paused;
+  document.body.classList.toggle("here", here);
+  $("path").setAttribute("d", PLAY);
+  if (!n) {
+    $("name").textContent = "No stations"; $("count").textContent = "";
+    $("hint").textContent = "Check Wi-Fi, then reopen the app"; $("hint").className = "err";
+    return;
+  }
+  const nm = $("name");
+  nm.textContent = stations[sel].name;
+  if (dir) { nm.className = ""; void nm.offsetWidth; nm.className = dir > 0 ? "up" : "down"; }
+  $("count").textContent = (sel + 1) + " / " + n;
+  document.body.style.setProperty("--h", hueFor(stations[sel].name));
 }
 
 function move(delta) {
-  if (!stations.length) return;
+  if (stations.length < 2) return;
   sel = (sel + delta + stations.length) % stations.length;
-  render();
+  angle += delta * 15;
+  $("dial").style.transform = "translate(-50%,-50%) rotate(" + angle + "deg)";
+  render(delta);
 }
+
+function fail() { setStatus("Stopped", "Can't play this station. Pick another."); }
 
 function play(i) {
   const st = stations[i];
   if (!st) return;
   cur = i;
-  $("name").textContent = st.name;
-  setStatus("Connecting", "");
+  setStatus("Connecting");
   audio.src = st.url;
-  audio.play().catch(() => setStatus("Can't play this station. Pick another.", "err"));
+  audio.play().catch(fail);
   store.set("last", st.url);
   render();
 }
 
 function toggle() {
+  if (!stations.length) return;
   if (cur !== sel) { play(sel); return; }
-  if (audio.paused) audio.play().catch(() => setStatus("Can't play this station. Pick another.", "err"));
-  else audio.pause();
+  if (audio.paused) audio.play().catch(fail); else audio.pause();
 }
 
-audio.addEventListener("playing", () => setStatus("Playing", "on"));
-audio.addEventListener("pause", () => setStatus("Paused", ""));
-audio.addEventListener("waiting", () => setStatus("Buffering", ""));
-audio.addEventListener("error", () => setStatus("Station offline. Pick another.", "err"));
+audio.addEventListener("playing", () => { document.body.classList.add("playing"); setStatus("Playing"); render(); });
+audio.addEventListener("pause", () => { document.body.classList.remove("playing"); setStatus("Paused"); render(); });
+audio.addEventListener("waiting", () => setStatus("Buffering"));
+audio.addEventListener("error", () => {
+  document.body.classList.remove("playing");
+  setStatus("Offline", "Station offline. Pick another.");
+  render();
+});
 
 async function load() {
   const cached = store.get("stations");
@@ -112,24 +195,22 @@ async function load() {
       if (fresh.length) { store.set("stations", fresh); useStations(fresh); return; }
     } catch (e) { /* try next server */ }
   }
-  if (!stations.length) { useStations([]); }
+  if (!stations.length) useStations([]);
 }
 
 function useStations(list) {
   const mine = MY_STATIONS.filter(s => s.url.startsWith("https://"));
   const urls = new Set(mine.map(s => s.url));
-  const wasPlaying = cur >= 0 ? stations[cur].url : null;
+  const playingUrl = cur >= 0 && stations[cur] ? stations[cur].url : null;
   stations = mine.concat(list.filter(s => !urls.has(s.url)));
-  const last = store.get("last");
-  const keep = wasPlaying || last;
-  const idx = stations.findIndex(s => s.url === keep);
+  const idx = stations.findIndex(s => s.url === (playingUrl || store.get("last")));
   sel = idx >= 0 ? idx : 0;
-  cur = wasPlaying ? idx : -1;
-  setStatus(stations.length ? "Press the side button to play" : "No stations", "");
+  cur = playingUrl && idx >= 0 ? idx : -1;
+  setStatus(stations.length ? "Ready" : "No stations");
   render();
 }
 
-// R1 hardware: scroll wheel and side button. Keyboard keys are for testing in a desktop browser.
+// R1 hardware: scroll wheel and side button. Keys and taps work for testing in a desktop browser.
 window.addEventListener("scrollUp", () => move(-1));
 window.addEventListener("scrollDown", () => move(1));
 window.addEventListener("sideClick", toggle);
@@ -138,6 +219,7 @@ window.addEventListener("keydown", e => {
   else if (e.key === "ArrowDown") move(1);
   else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
 });
+$("disc").onclick = toggle;
 
 load();
 </script>
