@@ -67,6 +67,9 @@
   .wave.b { bottom:-6px; fill:hsl(var(--h) 85% 62% / .22); animation-duration:6s; animation-direction:reverse; }
   body.playing .wave { animation-duration:4s; } body.playing .wave.b { animation-duration:2.8s; }
   @keyframes flow { to { transform:translateX(-240px); } }
+  #stage.shake { animation:jolt .5s ease-out; }
+  @keyframes jolt { 20% { transform:translateX(-7px) rotate(-5deg); } 40% { transform:translateX(7px) rotate(5deg); }
+    60% { transform:translateX(-4px) rotate(-2deg); } 80% { transform:translateX(3px) rotate(1deg); } }
 </style>
 </head>
 <body>
@@ -124,7 +127,7 @@ function setStatus(text, err) {
   $("statusText").textContent = text;
   const h = $("hint");
   if (err) { h.textContent = err; h.className = "err"; }
-  else { h.textContent = "Scroll to tune · side button plays"; h.className = ""; }
+  else { h.textContent = "Scroll to tune · side plays · shake mixes"; h.className = ""; }
 }
 
 function render(dir) {
@@ -217,10 +220,55 @@ window.addEventListener("sideClick", toggle);
 window.addEventListener("keydown", e => {
   if (e.key === "ArrowUp") move(-1);
   else if (e.key === "ArrowDown") move(1);
+  else if (e.key === "r") randomStation();
   else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
 });
 $("disc").onclick = toggle;
 
+// Shake the r1 to jump to a random station.
+function randomStation() {
+  const n = stations.length;
+  if (n < 2) return;
+  let i;
+  do { i = Math.floor(Math.random() * n); } while (i === sel);
+  angle += ((i - sel + n) % n) * 15;
+  $("dial").style.transform = "translate(-50%,-50%) rotate(" + angle + "deg)";
+  sel = i;
+  render(1);
+  play(i);
+  const st = $("stage");
+  st.classList.remove("shake"); void st.offsetWidth; st.classList.add("shake");
+}
+
+let unit = null, hits = [], lastHit = 0, lastShake = 0;
+function onSample(x, y, z) {
+  let m = Math.sqrt(x * x + y * y + z * z);
+  if (unit === null) unit = m > 4 ? 9.81 : 1; // first reading at rest tells us if units are g or m/s²
+  m /= unit;
+  if (Math.abs(m - 1) < 1.5) return;
+  const now = Date.now();
+  if (now - lastHit < 80) return;
+  lastHit = now;
+  hits = hits.filter(t => now - t < 700);
+  hits.push(now);
+  if (hits.length >= 3 && now - lastShake > 1500) { lastShake = now; hits = []; randomStation(); }
+}
+
+function startShake() {
+  try {
+    const acc = window.creationSensors && window.creationSensors.accelerometer;
+    if (acc) {
+      acc.start(d => { if (d) onSample(+d.x || 0, +d.y || 0, +d.z || 0); }, { frequency: 30 });
+      return;
+    }
+  } catch (e) { /* fall back below */ }
+  window.addEventListener("devicemotion", e => {
+    const a = e.accelerationIncludingGravity;
+    if (a) onSample(a.x || 0, a.y || 0, a.z || 0);
+  });
+}
+
+startShake();
 load();
 </script>
 </body>
