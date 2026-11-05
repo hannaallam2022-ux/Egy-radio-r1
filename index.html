@@ -10,86 +10,82 @@
   html, body { width:240px; height:282px; overflow:hidden; }
   body { --h:42; transition:--h .9s ease; color:#f3efe2; position:relative;
     font-family:"Noto Sans Arabic","Segoe UI",Tahoma,sans-serif;
-    background:radial-gradient(ellipse at 50% 30%, hsl(var(--h) 55% 17%), #050b1c 72%); }
-
-  #sky span { position:absolute; width:2px; height:2px; border-radius:50%; background:#fff; opacity:.2;
-    animation:twinkle 3s ease-in-out infinite; }
+    background:radial-gradient(ellipse at 50% 28%, hsl(var(--h) 55% 17%), #050b1c 72%); }
+  #sky span { position:absolute; width:2px; height:2px; border-radius:50%; background:#fff; opacity:.2; animation:twinkle 3s ease-in-out infinite; }
   @keyframes twinkle { 50% { opacity:.85; transform:scale(1.6); } }
 
-  header { position:absolute; top:8px; left:14px; right:14px; display:flex; justify-content:space-between;
-    font-size:11px; color:hsl(var(--h) 30% 70%); z-index:3; }
+  header { position:absolute; top:7px; left:14px; right:14px; display:flex; justify-content:space-between; font-size:11px; color:hsl(var(--h) 30% 70%); z-index:3; }
   #state { display:flex; align-items:center; gap:6px; }
   .dot { width:6px; height:6px; border-radius:50%; background:hsl(var(--h) 30% 55%); }
   body.playing .dot { background:hsl(var(--h) 95% 65%); box-shadow:0 0 8px hsl(var(--h) 95% 65%); }
   body.playing #statusText { color:hsl(var(--h) 95% 72%); }
 
-  #stage { position:absolute; top:26px; left:50%; width:150px; height:150px; margin-left:-75px; z-index:2; }
+  #stage { position:absolute; top:22px; left:50%; width:130px; height:130px; margin-left:-65px; z-index:2; }
   #stage > * { position:absolute; top:50%; left:50%; border-radius:50%; transform:translate(-50%,-50%); }
-  .rip { width:104px; height:104px; border:1.5px solid hsl(var(--h) 95% 65%); opacity:0; }
+  .rip { width:92px; height:92px; border:1.5px solid hsl(var(--h) 95% 65%); opacity:0; }
   body.playing .rip { animation:ripple 2.7s ease-out infinite; }
   .rip:nth-of-type(2) { animation-delay:.9s !important; } .rip:nth-of-type(3) { animation-delay:1.8s !important; }
-  @keyframes ripple { 0% { transform:translate(-50%,-50%) scale(1); opacity:.7; }
-    100% { transform:translate(-50%,-50%) scale(1.45); opacity:0; } }
-
-  #dial { width:140px; height:140px; transition:transform .4s cubic-bezier(.2,.9,.3,1.25);
+  @keyframes ripple { 0% { transform:translate(-50%,-50%) scale(1); opacity:.7; } 100% { transform:translate(-50%,-50%) scale(1.4); opacity:0; } }
+  #dial { width:124px; height:124px; transition:transform .4s cubic-bezier(.2,.9,.3,1.25);
     background:repeating-conic-gradient(hsl(var(--h) 85% 72% / .85) 0 1.6deg, transparent 1.6deg 15deg);
-    -webkit-mask:radial-gradient(circle, transparent 60px, #000 61px 69px, transparent 70px);
-            mask:radial-gradient(circle, transparent 60px, #000 61px 69px, transparent 70px); }
-  #dial::after { content:""; position:absolute; top:-3px; left:50%; width:3px; height:9px; margin-left:-1.5px; }
-  #pointer { position:absolute; top:1px; left:50%; width:0; height:0; margin-left:-5px; transform:none;
-    border-left:5px solid transparent; border-right:5px solid transparent; border-top:8px solid #fff; border-radius:0 !important; }
-
-  #disc { width:104px; height:104px; display:grid; place-items:center; border:0; color:#1c1203;
+    -webkit-mask:radial-gradient(circle, transparent 53px, #000 54px 60px, transparent 61px);
+            mask:radial-gradient(circle, transparent 53px, #000 54px 60px, transparent 61px); }
+  #pointer { top:0 !important; margin-left:-5px; transform:none !important; width:0; height:0; border-radius:0 !important;
+    border-left:5px solid transparent; border-right:5px solid transparent; border-top:8px solid #fff; }
+  #disc { width:92px; height:92px; display:grid; place-items:center; border:0; color:#1c1203;
     background:radial-gradient(circle at 35% 30%, hsl(var(--h) 100% 82%), hsl(var(--h) 92% 58%) 55%, hsl(calc(var(--h) - 12) 85% 38%));
     box-shadow:0 0 26px hsl(var(--h) 95% 55% / .45), inset 0 -8px 16px hsl(var(--h) 90% 25% / .45); }
   body.playing #disc { animation:breathe 2.4s ease-in-out infinite; }
   @keyframes breathe { 50% { transform:translate(-50%,-50%) scale(1.05); box-shadow:0 0 44px hsl(var(--h) 95% 60% / .75), inset 0 -8px 16px hsl(var(--h) 90% 25% / .45); } }
-  #disc:active { filter:brightness(1.1); }
-  #icon { width:34px; height:34px; fill:currentColor; }
-  #bars { display:none; align-items:center; gap:4px; height:34px; }
+  #icon { width:30px; height:30px; fill:currentColor; }
+  #bars { display:none; align-items:center; gap:4px; height:30px; }
   #bars i { width:5px; border-radius:3px; background:currentColor; animation:bar .8s ease-in-out infinite; }
-  #bars i:nth-child(1) { animation-delay:0s; } #bars i:nth-child(2) { animation-delay:.2s; }
-  #bars i:nth-child(3) { animation-delay:.4s; } #bars i:nth-child(4) { animation-delay:.1s; } #bars i:nth-child(5) { animation-delay:.3s; }
-  @keyframes bar { 0%,100% { height:7px; } 50% { height:32px; } }
+  #bars i:nth-child(2) { animation-delay:.2s; } #bars i:nth-child(3) { animation-delay:.4s; } #bars i:nth-child(4) { animation-delay:.1s; } #bars i:nth-child(5) { animation-delay:.3s; }
+  @keyframes bar { 0%,100% { height:7px; } 50% { height:28px; } }
   body.here #icon { display:none; } body.here #bars { display:flex; }
+  #stage.shake { animation:jolt .5s ease-out; }
+  @keyframes jolt { 20% { transform:translateX(-7px) rotate(-5deg); } 40% { transform:translateX(7px) rotate(5deg); } 60% { transform:translateX(-4px) rotate(-2deg); } 80% { transform:translateX(3px) rotate(1deg); } }
 
-  #info { position:absolute; top:182px; left:0; right:0; text-align:center; padding:0 16px; z-index:3; }
-  #name { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  #volbar { position:absolute; top:148px; left:65px; width:110px; height:4px; border-radius:2px; background:hsl(var(--h) 30% 30% / .6); opacity:0; transition:opacity .25s; z-index:4; }
+  #volbar.show { opacity:1; } #volbar i { display:block; height:100%; border-radius:2px; background:hsl(var(--h) 95% 68%); }
+
+  #info { position:absolute; top:156px; left:0; right:0; text-align:center; padding:0 16px; z-index:3; }
+  #name { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:24px;
     font-size:19px; font-weight:700; line-height:1.25; text-shadow:0 2px 14px hsl(var(--h) 90% 40% / .6); }
   #name.up { animation:slideUp .28s ease-out; } #name.down { animation:slideDown .28s ease-out; }
-  @keyframes slideUp { from { transform:translateY(14px); opacity:0; } }
-  @keyframes slideDown { from { transform:translateY(-14px); opacity:0; } }
-  #hint { margin-top:4px; font-size:10.5px; color:hsl(var(--h) 25% 68%); line-height:1.3; }
+  @keyframes slideUp { from { transform:translateY(14px); opacity:0; } } @keyframes slideDown { from { transform:translateY(-14px); opacity:0; } }
+  #hint { margin-top:5px; font-size:10.5px; color:hsl(var(--h) 25% 68%); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   #hint.err { color:#ff9a86; }
 
-  .wave { position:absolute; left:0; bottom:0; width:480px; height:44px; fill:hsl(var(--h) 75% 48% / .32);
-    animation:flow 9s linear infinite; }
+  #chips { position:absolute; left:6px; right:6px; top:238px; height:27px; display:flex; gap:3px; z-index:4; }
+  #chips button { flex:1; min-width:0; border:1px solid hsl(var(--h) 60% 60% / .4); background:hsl(var(--h) 60% 12% / .75);
+    color:hsl(var(--h) 40% 82%); border-radius:14px; font:600 10px "Noto Sans Arabic","Segoe UI",Tahoma,sans-serif; padding:0; white-space:nowrap; }
+  #chips button.on { background:hsl(var(--h) 90% 64%); color:#1c1203; border-color:transparent; }
+  #chips button:active { transform:scale(.94); }
+  #cFav { flex:0 0 28px; font-size:14px; }
+
+  .wave { position:absolute; left:0; bottom:0; width:480px; height:40px; fill:hsl(var(--h) 75% 48% / .32); animation:flow 9s linear infinite; }
   .wave.b { bottom:-6px; fill:hsl(var(--h) 85% 62% / .22); animation-duration:6s; animation-direction:reverse; }
   body.playing .wave { animation-duration:4s; } body.playing .wave.b { animation-duration:2.8s; }
   @keyframes flow { to { transform:translateX(-240px); } }
-  #stage.shake { animation:jolt .5s ease-out; }
-  @keyframes jolt { 20% { transform:translateX(-7px) rotate(-5deg); } 40% { transform:translateX(7px) rotate(5deg); }
-    60% { transform:translateX(-4px) rotate(-2deg); } 80% { transform:translateX(3px) rotate(1deg); } }
 </style>
 </head>
 <body>
 <div id="sky"></div>
-<header>
-  <div id="state"><span class="dot"></span><span id="statusText">Loading</span></div>
-  <span id="count"></span>
-</header>
+<header><div id="state"><span class="dot"></span><span id="statusText">Loading</span></div><span id="count"></span></header>
 <div id="stage">
   <div class="rip"></div><div class="rip"></div><div class="rip"></div>
   <div id="dial"></div><div id="pointer"></div>
   <button id="disc" aria-label="Play or pause">
-    <svg id="icon" viewBox="0 0 24 24"><path id="path" d="M8 5v14l11-7z"/></svg>
+    <svg id="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
     <div id="bars"><i></i><i></i><i></i><i></i><i></i></div>
   </button>
 </div>
-<div id="info">
-  <div id="name" dir="auto">Egypt Radio</div>
-  <div id="hint">Scroll to tune</div>
-</div>
+<div id="volbar"><i></i></div>
+<div id="info"><div id="name" dir="auto">Egypt Radio</div><div id="hint"></div></div>
+<nav id="chips">
+  <button id="cFav">☆</button><button id="cFilter">All</button><button id="cVol">Vol</button><button id="cSleep">Zz</button><button id="cMix">Mix</button>
+</nav>
 <svg class="wave b" viewBox="0 0 480 44"><path d="M0 22Q30 2 60 22T120 22T180 22T240 22T300 22T360 22T420 22T480 22V44H0Z"/></svg>
 <svg class="wave" viewBox="0 0 480 44"><path d="M0 24Q30 6 60 24T120 24T180 24T240 24T300 24T360 24T420 24T480 24V44H0Z"/></svg>
 <audio id="audio" preload="none"></audio>
@@ -99,177 +95,227 @@
 const MY_STATIONS = [
   // { name: "Example FM", url: "https://example.com/stream.mp3" },
 ];
-
 const SERVERS = ["https://de1.api.radio-browser.info", "https://at1.api.radio-browser.info", "https://nl1.api.radio-browser.info"];
-const QUERY = "/json/stations/search?countrycode=EG&hidebroken=true&order=clickcount&reverse=true&limit=60";
-const PLAY = "M8 5v14l11-7z", PAUSE = "M6 5h4v14H6zM14 5h4v14h-4z";
-const HUES = [172, 42, 14, 265, 150, 205]; // turquoise, gold, carnelian, lapis violet, jade, azure
+const QUERY = "/json/stations/search?countrycode=EG&hidebroken=true&order=clickcount&reverse=true&limit=80";
+const HUES = [172, 42, 14, 265, 150, 205];
+const FILTERS = ["All", "Favs", "Music", "News", "Talk", "Quran"];
+const SLEEP = [0, 15, 30, 60];
+const MIX_LABEL = { list: "Mix", favs: "Mix★", off: "No mix" };
 
 const $ = id => document.getElementById(id);
 const audio = $("audio");
-let stations = [], sel = 0, cur = -1, angle = 0;
-
 const store = {
   get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 };
 
+let all = [], view = [], sel = 0, curUrl = null, angle = 0;
+let filter = store.get("filter") || "All", favs = new Set(store.get("favs") || []);
+let vol = store.get("vol") == null ? 0.8 : store.get("vol"), mode = "tune", mixMode = store.get("mix") || "list";
+let dead = new Set(), skips = 0, connTimer = null, hintTimer = null, volTimer = null;
+let sleepIdx = 0, sleepEnd = 0, fade = 1;
+
 for (let i = 0; i < 16; i++) {
   const s = document.createElement("span");
-  s.style.left = Math.random() * 236 + "px"; s.style.top = Math.random() * 150 + "px";
-  s.style.animationDelay = (Math.random() * 3) + "s";
+  s.style.left = Math.random() * 236 + "px"; s.style.top = Math.random() * 140 + "px"; s.style.animationDelay = Math.random() * 3 + "s";
   $("sky").appendChild(s);
 }
 
 function hueFor(name) { let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0; return HUES[h % HUES.length]; }
+function cat(st) {
+  const t = ((st.tags || "") + " " + st.name).toLowerCase();
+  if (/quran|koran|قرآن|قران/.test(t)) return "Quran";
+  if (/news|أخبار|اخبار/.test(t)) return "News";
+  if (/talk|speech|discussion|sport|حوار|رياضة/.test(t)) return "Talk";
+  return "Music";
+}
+function setStatus(t) { $("statusText").textContent = t; }
+function defaultHint() { return mode === "vol" ? "Scroll to set volume" : "Scroll to tune · hold side = ★"; }
+function toast(msg, err, ms) {
+  const h = $("hint"); h.textContent = msg; h.className = err ? "err" : "";
+  clearTimeout(hintTimer);
+  if (ms !== 0) hintTimer = setTimeout(() => { h.textContent = defaultHint(); h.className = ""; }, ms || 2200);
+}
+function applyVol() { audio.volume = Math.max(0, Math.min(1, vol * fade)); }
+function rotate(steps) { angle += steps * 15; $("dial").style.transform = "translate(-50%,-50%) rotate(" + angle + "deg)"; }
+function showVol() {
+  $("volbar").firstChild.style.width = Math.round(vol * 100) + "%"; $("volbar").classList.add("show");
+  clearTimeout(volTimer); if (mode !== "vol") volTimer = setTimeout(() => $("volbar").classList.remove("show"), 1500);
+}
+function sleepLabel() {
+  $("cSleep").textContent = sleepEnd ? Math.ceil((sleepEnd - Date.now()) / 60000) + "m" : "Zz";
+  $("cSleep").classList.toggle("on", !!sleepEnd);
+}
 
-function setStatus(text, err) {
-  $("statusText").textContent = text;
-  const h = $("hint");
-  if (err) { h.textContent = err; h.className = "err"; }
-  else { h.textContent = "Scroll to tune · side plays · shake mixes"; h.className = ""; }
+function rebuildView(keepUrl) {
+  view = all.filter(s => filter === "All" || (filter === "Favs" ? favs.has(s.url) : cat(s) === filter));
+  if (!view.length && filter !== "All") { filter = "All"; return rebuildView(keepUrl); }
+  const i = view.findIndex(s => s.url === keepUrl);
+  sel = i >= 0 ? i : Math.min(sel, Math.max(view.length - 1, 0));
 }
 
 function render(dir) {
-  const n = stations.length;
-  const here = cur === sel && !audio.paused;
-  document.body.classList.toggle("here", here);
-  $("path").setAttribute("d", PLAY);
-  if (!n) {
-    $("name").textContent = "No stations"; $("count").textContent = "";
-    $("hint").textContent = "Check Wi-Fi, then reopen the app"; $("hint").className = "err";
-    return;
-  }
-  const nm = $("name");
-  nm.textContent = stations[sel].name;
+  const st = view[sel];
+  document.body.classList.toggle("here", !!st && curUrl === st.url && !audio.paused);
+  $("cFilter").textContent = filter; $("cFilter").classList.toggle("on", filter !== "All");
+  $("cVol").textContent = "Vol " + Math.round(vol * 100); $("cVol").classList.toggle("on", mode === "vol");
+  $("cMix").textContent = MIX_LABEL[mixMode]; $("cMix").classList.toggle("on", mixMode !== "list");
+  $("cFav").textContent = st && favs.has(st.url) ? "★" : "☆"; $("cFav").classList.toggle("on", !!st && favs.has(st.url));
+  if (!st) { $("name").textContent = "No stations"; $("count").textContent = ""; toast("Check Wi-Fi, then reopen the app", true, 0); return; }
+  const nm = $("name"); nm.textContent = st.name;
   if (dir) { nm.className = ""; void nm.offsetWidth; nm.className = dir > 0 ? "up" : "down"; }
-  $("count").textContent = (sel + 1) + " / " + n;
-  document.body.style.setProperty("--h", hueFor(stations[sel].name));
+  $("count").textContent = (sel + 1) + " / " + view.length;
+  document.body.style.setProperty("--h", hueFor(st.name));
 }
 
+function changeVol(d) {
+  vol = Math.max(0, Math.min(1, Math.round((vol + d) * 10) / 10));
+  applyVol(); store.set("vol", vol); showVol(); toast("Volume " + Math.round(vol * 100) + "%"); render();
+}
 function move(delta) {
-  if (stations.length < 2) return;
-  sel = (sel + delta + stations.length) % stations.length;
-  angle += delta * 15;
-  $("dial").style.transform = "translate(-50%,-50%) rotate(" + angle + "deg)";
-  render(delta);
+  if (mode === "vol") { rotate(delta); changeVol(-delta * 0.1); return; }
+  if (view.length < 2) return;
+  sel = (sel + delta + view.length) % view.length; rotate(delta); render(delta);
 }
 
-function fail() { setStatus("Stopped", "Can't play this station. Pick another."); }
+function play(url, auto) {
+  if (!url) return;
+  curUrl = url; if (!auto) { skips = 0; dead.delete(url); }
+  setStatus("Connecting"); clearTimeout(connTimer);
+  audio.src = url; applyVol();
+  audio.play().catch(e => { if (!e || e.name !== "AbortError") onFail(url); });
+  connTimer = setTimeout(() => onFail(url), 12000);
+  store.set("last", url); render();
+}
+function onFail(url) {
+  if (url !== curUrl) return;
+  clearTimeout(connTimer); dead.add(url); skips++;
+  const base = view.findIndex(s => s.url === url);
+  if (skips <= 8) for (let k = 1; k <= view.length; k++) {
+    const i = (Math.max(base, 0) + k) % view.length;
+    if (view[i] && !dead.has(view[i].url)) { sel = i; rotate(k); render(1); toast("Offline, skipped to next"); play(view[i].url, true); return; }
+  }
+  document.body.classList.remove("playing"); setStatus("Offline"); toast("No working stations found", true, 0); render();
+}
+function toggle() {
+  const st = view[sel]; if (!st) return;
+  if (curUrl !== st.url) { play(st.url); return; }
+  if (audio.paused) audio.play().catch(e => { if (!e || e.name !== "AbortError") onFail(curUrl); }); else audio.pause();
+}
 
-function play(i) {
-  const st = stations[i];
-  if (!st) return;
-  cur = i;
-  setStatus("Connecting");
-  audio.src = st.url;
-  audio.play().catch(fail);
-  store.set("last", st.url);
+function toggleFav() {
+  const st = view[sel]; if (!st) return;
+  const on = !favs.has(st.url); if (on) favs.add(st.url); else favs.delete(st.url);
+  store.set("favs", [...favs]); toast(on ? "Added to favorites" : "Removed from favorites");
+  if (filter === "Favs") rebuildView(on ? st.url : null);
   render();
 }
-
-function toggle() {
-  if (!stations.length) return;
-  if (cur !== sel) { play(sel); return; }
-  if (audio.paused) audio.play().catch(fail); else audio.pause();
+function cycleFilter() {
+  const keep = view[sel] && view[sel].url;
+  for (let k = 1; k <= FILTERS.length; k++) {
+    const f = FILTERS[(FILTERS.indexOf(filter) + k) % FILTERS.length];
+    if (f === "All" || all.some(s => f === "Favs" ? favs.has(s.url) : cat(s) === f)) { filter = f; break; }
+  }
+  store.set("filter", filter); rebuildView(keep); render(1); toast(filter + ": " + view.length + " stations");
+}
+function cycleSleep() {
+  sleepIdx = (sleepIdx + 1) % SLEEP.length;
+  sleepEnd = SLEEP[sleepIdx] ? Date.now() + SLEEP[sleepIdx] * 60000 : 0;
+  fade = 1; applyVol(); sleepLabel(); toast(sleepEnd ? "Sleep in " + SLEEP[sleepIdx] + " min" : "Sleep timer off");
+}
+function cycleMix() {
+  mixMode = mixMode === "list" ? "favs" : mixMode === "favs" ? "off" : "list";
+  store.set("mix", mixMode); render();
+  toast(mixMode === "off" ? "Shake is off" : mixMode === "favs" ? "Shake picks from favorites" : "Shake picks from this list");
+}
+function toggleVolMode() {
+  mode = mode === "vol" ? "tune" : "vol";
+  if (mode === "vol") showVol(); else $("volbar").classList.remove("show");
+  toast(mode === "vol" ? "Scroll changes volume" : "Scroll tunes stations"); render();
 }
 
-audio.addEventListener("playing", () => { document.body.classList.add("playing"); setStatus("Playing"); render(); });
+setInterval(() => {
+  if (!sleepEnd) return;
+  const left = sleepEnd - Date.now();
+  if (left <= 0) { sleepEnd = 0; sleepIdx = 0; audio.pause(); fade = 1; applyVol(); toast("Sleep timer ended"); }
+  else if (left < 15000) { fade = left / 15000; applyVol(); }
+  sleepLabel();
+}, 1000);
+
+audio.addEventListener("playing", () => { clearTimeout(connTimer); skips = 0; document.body.classList.add("playing"); setStatus("Playing"); render(); });
 audio.addEventListener("pause", () => { document.body.classList.remove("playing"); setStatus("Paused"); render(); });
 audio.addEventListener("waiting", () => setStatus("Buffering"));
-audio.addEventListener("error", () => {
-  document.body.classList.remove("playing");
-  setStatus("Offline", "Station offline. Pick another.");
-  render();
-});
+audio.addEventListener("error", () => onFail(curUrl));
 
 async function load() {
-  const cached = store.get("stations");
+  const cached = store.get("stations2");
   if (cached && cached.length) useStations(cached);
   for (const base of SERVERS) {
     try {
-      const res = await fetch(base + QUERY);
-      if (!res.ok) continue;
-      const data = await res.json();
+      const res = await fetch(base + QUERY); if (!res.ok) continue;
       const seen = new Set();
-      const fresh = data
-        .map(s => ({ name: (s.name || "").trim(), url: s.url_resolved || "" }))
+      const fresh = (await res.json())
+        .map(s => ({ name: (s.name || "").trim(), url: s.url_resolved || "", tags: s.tags || "" }))
         .filter(s => s.name && s.url.startsWith("https://") && !seen.has(s.url) && seen.add(s.url));
-      if (fresh.length) { store.set("stations", fresh); useStations(fresh); return; }
+      if (fresh.length) { store.set("stations2", fresh); useStations(fresh); return; }
     } catch (e) { /* try next server */ }
   }
-  if (!stations.length) useStations([]);
+  if (!all.length) useStations([]);
 }
-
 function useStations(list) {
   const mine = MY_STATIONS.filter(s => s.url.startsWith("https://"));
   const urls = new Set(mine.map(s => s.url));
-  const playingUrl = cur >= 0 && stations[cur] ? stations[cur].url : null;
-  stations = mine.concat(list.filter(s => !urls.has(s.url)));
-  const idx = stations.findIndex(s => s.url === (playingUrl || store.get("last")));
-  sel = idx >= 0 ? idx : 0;
-  cur = playingUrl && idx >= 0 ? idx : -1;
-  setStatus(stations.length ? "Ready" : "No stations");
-  render();
+  all = mine.concat(list.filter(s => !urls.has(s.url)));
+  rebuildView(curUrl || store.get("last"));
+  setStatus(all.length ? "Ready" : "No stations"); toast(defaultHint(), false, 0); render();
 }
 
-// R1 hardware: scroll wheel and side button. Keys and taps work for testing in a desktop browser.
-window.addEventListener("scrollUp", () => move(-1));
-window.addEventListener("scrollDown", () => move(1));
-window.addEventListener("sideClick", toggle);
-window.addEventListener("keydown", e => {
-  if (e.key === "ArrowUp") move(-1);
-  else if (e.key === "ArrowDown") move(1);
-  else if (e.key === "r") randomStation();
-  else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
-});
-$("disc").onclick = toggle;
-
-// Shake the r1 to jump to a random station.
+// Shake: jump to a random station (or favorite).
+function jumpTo(url) {
+  let i = view.findIndex(s => s.url === url);
+  if (i < 0) { filter = "All"; rebuildView(url); } else { rotate((i - sel + view.length) % view.length); sel = i; }
+  render(1); play(url);
+  const st = $("stage"); st.classList.remove("shake"); void st.offsetWidth; st.classList.add("shake");
+}
 function randomStation() {
-  const n = stations.length;
-  if (n < 2) return;
-  let i;
-  do { i = Math.floor(Math.random() * n); } while (i === sel);
-  angle += ((i - sel + n) % n) * 15;
-  $("dial").style.transform = "translate(-50%,-50%) rotate(" + angle + "deg)";
-  sel = i;
-  render(1);
-  play(i);
-  const st = $("stage");
-  st.classList.remove("shake"); void st.offsetWidth; st.classList.add("shake");
+  if (mixMode === "off") return;
+  const pool = (mixMode === "favs" ? all.filter(s => favs.has(s.url)) : view).filter(s => s.url !== curUrl && !dead.has(s.url));
+  if (!pool.length) { toast(mixMode === "favs" ? "No favorites to mix yet" : "Nothing to mix", true); return; }
+  jumpTo(pool[Math.floor(Math.random() * pool.length)].url);
 }
-
 let unit = null, hits = [], lastHit = 0, lastShake = 0;
 function onSample(x, y, z) {
   let m = Math.sqrt(x * x + y * y + z * z);
-  if (unit === null) unit = m > 4 ? 9.81 : 1; // first reading at rest tells us if units are g or m/s²
-  m /= unit;
-  if (Math.abs(m - 1) < 1.5) return;
-  const now = Date.now();
-  if (now - lastHit < 80) return;
-  lastHit = now;
-  hits = hits.filter(t => now - t < 700);
-  hits.push(now);
+  if (unit === null) unit = m > 4 ? 9.81 : 1;
+  if (Math.abs(m / unit - 1) < 1.5) return;
+  const now = Date.now(); if (now - lastHit < 80) return; lastHit = now;
+  hits = hits.filter(t => now - t < 700); hits.push(now);
   if (hits.length >= 3 && now - lastShake > 1500) { lastShake = now; hits = []; randomStation(); }
 }
-
 function startShake() {
   try {
     const acc = window.creationSensors && window.creationSensors.accelerometer;
-    if (acc) {
-      acc.start(d => { if (d) onSample(+d.x || 0, +d.y || 0, +d.z || 0); }, { frequency: 30 });
-      return;
-    }
+    if (acc) { acc.start(d => { if (d) onSample(+d.x || 0, +d.y || 0, +d.z || 0); }, { frequency: 30 }); return; }
   } catch (e) { /* fall back below */ }
-  window.addEventListener("devicemotion", e => {
-    const a = e.accelerationIncludingGravity;
-    if (a) onSample(a.x || 0, a.y || 0, a.z || 0);
-  });
+  window.addEventListener("devicemotion", e => { const a = e.accelerationIncludingGravity; if (a) onSample(a.x || 0, a.y || 0, a.z || 0); });
 }
 
-startShake();
-load();
+// R1 hardware. Long press on the side button toggles a favorite; keys work for desktop testing.
+let lpActive = false, lpEnd = 0;
+window.addEventListener("scrollUp", () => move(-1));
+window.addEventListener("scrollDown", () => move(1));
+window.addEventListener("sideClick", () => { if (!lpActive && Date.now() - lpEnd > 500) toggle(); });
+window.addEventListener("longPressStart", () => { lpActive = true; toggleFav(); });
+window.addEventListener("longPressEnd", () => { lpActive = false; lpEnd = Date.now(); });
+window.addEventListener("keydown", e => {
+  if (e.key === "ArrowUp") move(-1); else if (e.key === "ArrowDown") move(1);
+  else if (e.key === "r") randomStation(); else if (e.key === "f") toggleFav();
+  else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+});
+$("disc").onclick = toggle; $("cFav").onclick = toggleFav; $("cFilter").onclick = cycleFilter;
+$("cVol").onclick = toggleVolMode; $("cSleep").onclick = cycleSleep; $("cMix").onclick = cycleMix;
+
+applyVol(); toast(defaultHint(), false, 0); startShake(); load();
 </script>
 </body>
 </html>
