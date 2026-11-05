@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=240, initial-scale=1, user-scalable=no">
+<title>Egypt Radio</title>
+<style>
+  :root { --bg:#0c2b33; --panel:#14424d; --text:#f1ebd8; --dim:#8fb0b5; --gold:#e3b341; --err:#ff8a7a; }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  html, body { width:240px; height:282px; overflow:hidden; background:var(--bg); color:var(--text);
+    font-family:"Noto Sans Arabic","Segoe UI",Tahoma,sans-serif; }
+  #now { height:92px; padding:10px 12px; background:var(--panel); border-bottom:2px solid var(--gold);
+    display:flex; flex-direction:column; justify-content:center; }
+  #name { font-size:19px; font-weight:700; line-height:1.25; max-height:48px; overflow:hidden; }
+  #status { font-size:12px; color:var(--dim); margin-top:4px; }
+  #status.err { color:var(--err); }
+  #status.on { color:var(--gold); }
+  #list { height:190px; overflow-y:auto; scrollbar-width:none; }
+  #list::-webkit-scrollbar { display:none; }
+  .row { padding:9px 12px; font-size:15px; border-bottom:1px solid #1b4f5b; white-space:nowrap;
+    overflow:hidden; text-overflow:ellipsis; }
+  .row.sel { background:var(--gold); color:#1a1405; font-weight:700; }
+  .row.cur:not(.sel) { color:var(--gold); }
+  #msg { padding:16px 12px; font-size:14px; color:var(--dim); line-height:1.4; }
+</style>
+</head>
+<body>
+<div id="now">
+  <div id="name" dir="auto">Egypt Radio</div>
+  <div id="status">Loading stations</div>
+</div>
+<div id="list"></div>
+<audio id="audio" preload="none"></audio>
+
+<script>
+// Add your own verified stations here. They show up first. Use https stream URLs only.
+const MY_STATIONS = [
+  // { name: "Example FM", url: "https://example.com/stream.mp3" },
+];
+
+const SERVERS = ["https://de1.api.radio-browser.info", "https://at1.api.radio-browser.info", "https://nl1.api.radio-browser.info"];
+const QUERY = "/json/stations/search?countrycode=EG&hidebroken=true&order=clickcount&reverse=true&limit=60";
+
+const $ = id => document.getElementById(id);
+const audio = $("audio");
+let stations = [], sel = 0, cur = -1;
+
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+function setStatus(text, cls) { const s = $("status"); s.textContent = text; s.className = cls || ""; }
+
+function render() {
+  const list = $("list");
+  if (!stations.length) { list.innerHTML = '<div id="msg">No stations found. Check the Wi-Fi connection, then reopen the app.</div>'; return; }
+  list.innerHTML = "";
+  stations.forEach((st, i) => {
+    const d = document.createElement("div");
+    d.className = "row" + (i === sel ? " sel" : "") + (i === cur ? " cur" : "");
+    d.dir = "auto";
+    d.textContent = st.name;
+    d.onclick = () => { sel = i; play(i); };
+    list.appendChild(d);
+  });
+  const row = list.children[sel];
+  if (row) row.scrollIntoView({ block: "nearest" });
+}
+
+function move(delta) {
+  if (!stations.length) return;
+  sel = (sel + delta + stations.length) % stations.length;
+  render();
+}
+
+function play(i) {
+  const st = stations[i];
+  if (!st) return;
+  cur = i;
+  $("name").textContent = st.name;
+  setStatus("Connecting", "");
+  audio.src = st.url;
+  audio.play().catch(() => setStatus("Can't play this station. Pick another.", "err"));
+  store.set("last", st.url);
+  render();
+}
+
+function toggle() {
+  if (cur !== sel) { play(sel); return; }
+  if (audio.paused) audio.play().catch(() => setStatus("Can't play this station. Pick another.", "err"));
+  else audio.pause();
+}
+
+audio.addEventListener("playing", () => setStatus("Playing", "on"));
+audio.addEventListener("pause", () => setStatus("Paused", ""));
+audio.addEventListener("waiting", () => setStatus("Buffering", ""));
+audio.addEventListener("error", () => setStatus("Station offline. Pick another.", "err"));
+
+async function load() {
+  const cached = store.get("stations");
+  if (cached && cached.length) useStations(cached);
+  for (const base of SERVERS) {
+    try {
+      const res = await fetch(base + QUERY);
+      if (!res.ok) continue;
+      const data = await res.json();
+      const seen = new Set();
+      const fresh = data
+        .map(s => ({ name: (s.name || "").trim(), url: s.url_resolved || "" }))
+        .filter(s => s.name && s.url.startsWith("https://") && !seen.has(s.url) && seen.add(s.url));
+      if (fresh.length) { store.set("stations", fresh); useStations(fresh); return; }
+    } catch (e) { /* try next server */ }
+  }
+  if (!stations.length) { useStations([]); }
+}
+
+function useStations(list) {
+  const mine = MY_STATIONS.filter(s => s.url.startsWith("https://"));
+  const urls = new Set(mine.map(s => s.url));
+  const wasPlaying = cur >= 0 ? stations[cur].url : null;
+  stations = mine.concat(list.filter(s => !urls.has(s.url)));
+  const last = store.get("last");
+  const keep = wasPlaying || last;
+  const idx = stations.findIndex(s => s.url === keep);
+  sel = idx >= 0 ? idx : 0;
+  cur = wasPlaying ? idx : -1;
+  setStatus(stations.length ? "Press the side button to play" : "No stations", "");
+  render();
+}
+
+// R1 hardware: scroll wheel and side button. Keyboard keys are for testing in a desktop browser.
+window.addEventListener("scrollUp", () => move(-1));
+window.addEventListener("scrollDown", () => move(1));
+window.addEventListener("sideClick", toggle);
+window.addEventListener("keydown", e => {
+  if (e.key === "ArrowUp") move(-1);
+  else if (e.key === "ArrowDown") move(1);
+  else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+});
+
+load();
+</script>
+</body>
+</html>
